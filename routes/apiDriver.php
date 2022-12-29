@@ -14,7 +14,7 @@ Route::group([
         Route::post('login'     ,  [DriverAuthController::class, 'login']);
         Route::post('check/phone'     ,  [DriverAuthController::class, 'check_phone']);
         Route::post('current/location', [TripController::class, 'location']);
-        Route::post('add/register'     ,  [DriverAuthController::class, 'add_driver']);
+        Route::post('register'     ,  [DriverAuthController::class, 'add_driver']);
         
         
          //send message to login 

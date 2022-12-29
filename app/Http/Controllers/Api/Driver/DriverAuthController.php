@@ -370,32 +370,23 @@ class DriverAuthController extends Controller
         $request->validate([
             'name' => 'required|string',
             'password' => 'required|string',
-            // 'nationality' => 'required|string',
-            // 'ssd' => 'required|string',
             'address' => 'required|string',
-            // 'id_copy_no' => 'required|string',
-            // 'id_expiration_date' => 'required|string',
-            // 'license_type' => 'required|string',
-            // 'license_expiration_date' => 'required|string',
-            // 'birth_date' => 'required|string',
-            // 'start_working_date' => 'required|string',
-            // 'contract_end_date' => 'required|string',
-            // 'final_clearance_date' => 'required|string',
             'phone' => 'required|string',
-            'image' => 'required|mimes:jpeg,png,jpg,',
-            'id_image' => 'required|mimes:jpeg,png,jpg,',
-            'license_image' => 'required|mimes:jpeg,png,jpg,',
-            'document_image' => 'required|mimes:jpeg,png,jpg,',
-            'front_image' => 'required|mimes:jpeg,png,jpg,',
-            'back_image' => 'required|mimes:jpeg,png,jpg,',
-            'internal_image' => 'required|mimes:jpeg,png,jpg,',
+            'img_profile' => 'required|mimes:jpeg,png,jpg,',
+            'img_id' => 'required|mimes:jpeg,png,jpg,',
+            'img_license' => 'required|mimes:jpeg,png,jpg,',
+            'img_document' => 'required|mimes:jpeg,png,jpg,',
+            'img_car_front' => 'required|mimes:jpeg,png,jpg,',
+            'img_car_back' => 'required|mimes:jpeg,png,jpg,',
+            'img_car_internal' => 'required|mimes:jpeg,png,jpg,',
         ]);
 
         $driverData = Driver::where('phone', $request->phone)->get();
         if(count($driverData) > 0 ){
-            return $this->returnError('E001', 'هذه البيانات موجودة بالفعل');
+            return $this->returnError('00006', 'هذه البيانات موجودة بالفعل');
         }
-        else{
+        else
+        {
             $driver = new Driver;
             $driver->name = $request->name;
             $driver->password = '0' ;
@@ -403,21 +394,12 @@ class DriverAuthController extends Controller
             $driver->phone = $request->phone;
             $driver->group_id = 1;
             $driver->add_date = Carbon::now();
-            // $driver->nationality = $request->nationality;
-            // $driver->ssd ;
+
             $driver->state = 'pending';
-            // $driver->id_copy_no = $request->id_copy_no;
-            // $driver->id_expiration_date = $request->id_expiration_date;
-            // $driver->license_type = $request->license_type;
-            // $driver->license_expiration_date = $request->license_expiration_date;
-            // $driver->birth_date = $request->birth_date;
-            // // $driver->start_working_date = $request->start_working_date;
-            // $driver->contract_end_date = $request->contract_end_date;
-            // $driver->final_clearance_date = $request->final_clearance_date;
-            // $driver->admin_id = Auth::guard('admin')->user()->id;
+
         
-        if($request->hasFile('image')){
-            $file = $request->file('image');
+        if($request->hasFile('img_profile')){
+            $file = $request->file('img_profile');
 			$name = $file->getClientOriginalName();
 			$ext  = $file->getClientOriginalExtension();
 			$size = $file->getSize();
@@ -426,21 +408,57 @@ class DriverAuthController extends Controller
 			$image = time().'.'.$ext;
 			$file->move(public_path('images/drivers/personal_phonto'),$image);
 			$driver->persnol_photo =  $image;
-	
-		}
+	              }
         $driver->save();
 
-        $this->add_document($driver->id, 'صورة الهوية للسائق' , 'صورة الهوية للسائق تمت اضافتها عن طريق التطبيق', $request->file('id_image'), 'id');
-        $this->add_document($driver->id, 'صورة رخصة القيادة للسائق' , 'صورة رخصة القيادة للسائق تمت اضافتها عن طريق التطبيق', $request->file('license_image'), 'lecincse');
-        $this->add_document($driver->id, 'صورة الوثيقة للسائق' , 'صورة رخصة القيادة للسائق تمت اضافتها عن طريق التطبيق', $request->file('document_image'), 'document');
-        $this->add_document($driver->id, 'صورة امامية للمركبة' , 'صورة امامية للمركبة تمت اضافتها عن طريق التطبيق', $request->file('front_image'), 'front');
-        $this->add_document($driver->id, 'صورة خلفية للمركبة' , 'صورة خلفية للمركبة تمت اضافتها عن طريق التطبيق', $request->file('back_image'), 'back');
-        $this->add_document($driver->id, 'صورة داخلية للمركبة' , 'صورة داخلية للمركبة تمت اضافتها عن طريق التطبيق', $request->file('internal_image'), 'internal');
+       
+        $this->add_document($driver->id, 'صورة الهوية للسائق' , 'صورة الهوية للسائق تمت اضافتها عن طريق التطبيق', $request->file('img_id'), 'id');
+        $this->add_document($driver->id, 'صورة رخصة القيادة للسائق' , 'صورة رخصة القيادة للسائق تمت اضافتها عن طريق التطبيق', $request->file('img_license'), 'lecincse');
+        $this->add_document($driver->id, 'صورة الوثيقة للسائق' , 'صورة رخصة القيادة للسائق تمت اضافتها عن طريق التطبيق', $request->file('img_document'), 'document');
+        $this->add_document($driver->id, 'صورة امامية للمركبة' , 'صورة امامية للمركبة تمت اضافتها عن طريق التطبيق', $request->file('img_car_front'), 'front');
+        $this->add_document($driver->id, 'صورة خلفية للمركبة' , 'صورة خلفية للمركبة تمت اضافتها عن طريق التطبيق', $request->file('img_car_back'), 'back');
+        $this->add_document($driver->id, 'صورة داخلية للمركبة' , 'صورة داخلية للمركبة تمت اضافتها عن طريق التطبيق', $request->file('img_car_internal'), 'internal');
 
 
-        return $this->returnSuccessMessage("تم أضافة بياناتك بنجاح ");
+        $verison = Version::all();
+        $driverData=$driver;
+        $data = (object)[
+            'id'=>(string)$driverData->id,
+            'name'=>$driverData->name,
+            'phone'=>$driverData->phone,
+            'account'=>(double)$driverData->account,
+            'api_token'=>$driverData->api_token,
+            'current_vechile'=>(string)$driverData->current_vechile,
+            'current_loc_latitude'=>$driverData->current_loc_latitude,
+            'current_loc_longtitude'=>$driverData->current_loc_longtitude,
+            'current_loc_name'=>$driverData->current_loc_name,
+            'persnol_photo'=>$driverData->persnol_photo,
+            'state'=>$driverData->state,
+            'driverRate'=>(string)$driverData->driver_rate,
+            'driverCounter'=>(string)$driverData->driver_counter,
+            'vechileRate'=>(string)$driverData->vechile_rate,
+            'vechileCounter'=>(string)$driverData->vechile_counter,
+            'timeRate'=>(string)$driverData->time_rate,
+            'timeCounter'=>(string)$driverData->time_counter,
+            'idCopyNo'=>(string)$driverData->id_copy_no,
+            'idExpirationDate'=>$driverData->id_expiration_date,
+            'licenseType'=>$driverData->license_type,
+            'licenseExpirationDate'=>$driverData->license_expiration_date,
+            'birthDate'=>(string)$driverData->birth_date,
+            'startWorkingDate'=>$driverData->start_working_date,
+            'contractEndDate'=>$driverData->contract_end_date,
+            'finalClearanceDate'=>$driverData->final_clearance_date,
+            'email'=>$driverData->email,
+            'ssd'=>$driverData->ssd,
+            'currentVersionAndroid' =>  $verison[0]->driver,
+            'updatedAndroid' =>  $verison[0]->driver_state==0?false:true,
+            'currentVersionIos' =>  $verison[1]->driver,
+            'updatedIos' =>  $verison[1]->driver_state==0?false:true
+        ];
+       
+        return $this -> returnData($data,'register successfuly');
     }
-    return $this->returnError('E001', 'حدث خطاء ما');
+    return $this->returnError('00007', 'حدث خطاء ما');
 
     }
 
