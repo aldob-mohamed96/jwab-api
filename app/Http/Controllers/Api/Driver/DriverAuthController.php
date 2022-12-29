@@ -39,9 +39,11 @@ class DriverAuthController extends Controller
             
             $token = Auth::guard('driver-api')->attempt($credentials);
 
-            if(!$token){
-                return $this->returnError('E001', 'some thing went wrongs');
-            }else{
+            if(!$token)
+            {
+                return $this->returnError('00004', 'some thing went wrongs');
+            }
+            else{
                 $driverData = Auth::guard('driver-api') -> user();
                 $driverData->remember_token = $request->device_token;
                 $driverData->available = 0;
@@ -52,7 +54,44 @@ class DriverAuthController extends Controller
                 $driverData -> updating = $verison[0]->driver_state;
                 $driverData -> iosVersion = $verison[1]->driver;
                 $driverData -> iosUpdating = $verison[1]->driver_state;
-                return $this -> returnData('driver' , $driverData,'login successfuly');  
+     
+        
+                $verison = Version::all();
+                $data = (object)[
+                    'id'=>(string)$driverData->id,
+                    'name'=>$driverData->name,
+                    'phone'=>$driverData->phone,
+                    'account'=>(double)$driverData->account,
+                    'api_token'=>$driverData->api_token,
+                    'current_vechile'=>(string)$driverData->current_vechile,
+                    'current_loc_latitude'=>$driverData->current_loc_latitude,
+                    'current_loc_longtitude'=>$driverData->current_loc_longtitude,
+                    'current_loc_name'=>$driverData->current_loc_name,
+                    'persnol_photo'=>$driverData->persnol_photo,
+                    'state'=>$driverData->state,
+                    'driverRate'=>(string)$driverData->driver_rate,
+                    'driverCounter'=>(string)$driverData->driver_counter,
+                    'vechileRate'=>(string)$driverData->vechile_rate,
+                    'vechileCounter'=>(string)$driverData->vechile_counter,
+                    'timeRate'=>(string)$driverData->time_rate,
+                    'timeCounter'=>(string)$driverData->time_counter,
+                    'idCopyNo'=>(string)$driverData->id_copy_no,
+                    'idExpirationDate'=>$driverData->id_expiration_date,
+                    'licenseType'=>$driverData->license_type,
+                    'licenseExpirationDate'=>$driverData->license_expiration_date,
+                    'birthDate'=>(string)$driverData->birth_date,
+                    'startWorkingDate'=>$driverData->start_working_date,
+                    'contractEndDate'=>$driverData->contract_end_date,
+                    'finalClearanceDate'=>$driverData->final_clearance_date,
+                    'email'=>$driverData->email,
+                    'ssd'=>$driverData->ssd,
+                    'currentVersionAndroid' =>  $verison[0]->driver,
+                    'updatedAndroid' =>  $verison[0]->driver_state==0?false:true,
+                    'currentVersionIos' =>  $verison[1]->driver,
+                    'updatedIos' =>  $verison[1]->driver_state==0?false:true
+                ];
+               
+                return $this -> returnData($data,'login successfuly');  
             }    
         }catch(\Exception $ex){
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -60,7 +99,7 @@ class DriverAuthController extends Controller
         
     }
 
-    public function chech_phone(Request $request)
+    public function check_phone(Request $request)
     {
         $request->validate([
             'phone'    => ['required', 'string', 'min:10', 'max:10'],
@@ -68,21 +107,23 @@ class DriverAuthController extends Controller
         ]);
         $driver = Driver::where("phone",$request->phone)->get();
         if(count($driver) > 0 && $driver[0]->state === 'deleted'){
-            return $this->returnError('E001', "phone number is deleted ");
+            return $this->returnError('00001', "phone number is deleted ");
             
         }
         if(count($driver) > 0 && $driver[0]->state === 'blocked'){
-            return $this->returnError('E002', "phone number is blocked ");            
+            return $this->returnError('00002', "phone number is blocked ");            
         }
         if(count($driver) > 0){
             $verison = Version::all();
             $data = (object)[
-                'version' =>  $verison[0]->driver,
-                'updating' =>  $verison[0]->driver_state,
-                'iosVersion' =>  $verison[1]->driver,
-                'iosUpdating' =>  $verison[1]->driver_state
+                
+                'isRegistered' =>  true,
+                'currentVersionAndroid' =>  $verison[0]->driver,
+                'updatedAndroid' =>  $verison[0]->driver_state==0?false:true,
+                'currentVersionIos' =>  $verison[1]->driver,
+                'updatedIos' =>  $verison[1]->driver_state==0?false:true
             ];
-            return $this -> returnData('version' , $data,'true');    
+            return $this -> returnData($data,'true');    
         }
         else{
             $message ="مرحبا سائق الجواب الرمز ";
@@ -92,15 +133,16 @@ class DriverAuthController extends Controller
             if($code !== false){
                 $verison = Version::all();
                 $data = (object)[
-                    'code' => $code,
-                    'version' =>  $verison[0]->driver,
-                    'updating' =>  $verison[0]->driver_state,
-                    'iosVersion' =>  $verison[1]->driver,
-                    'iosUpdating' =>  $verison[1]->driver_state
+                    'code' => (string)$code,
+                    'isRegistered' =>  false,
+                    'currentVersionAndroid' =>  $verison[0]->driver,
+                    'updatedAndroid' =>  $verison[0]->driver_state==0?false:true,
+                    'currentVersionIos' =>  $verison[1]->driver,
+                    'updatedIos' =>  $verison[1]->driver_state==0?false:true
                 ];
-                return $this -> returnData('code' , $data,'false');
+                return $this -> returnData($data,'un registered');
             }else{
-                return $this->returnError('', "verification code has not sent ");
+                return $this->returnError('00003', "verification code has not sent ");
             }
         }
     }

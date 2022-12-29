@@ -88,26 +88,51 @@ class MessagesController extends Controller
     public function send_message_driver(Request $request)
     {
         $request->validate([
+            'type_verification'=> 'required|string',
             'phone'    => 'required|string|min:10|max:14',
             'phone_id'    => 'required|string',
         ]);
-        $driver = Driver::Where('phone', $request->phone)->get();
-        if(count($driver) === 0){
-            return $this->returnError('', 'phone number is not exist');
+
+        if($request->type_verification=='hasAccount')
+        {
+
+            $driver = Driver::Where('phone', $request->phone)->get();
+            if(count($driver) === 0){
+                return $this->returnError('00001', 'phone number is not exist');
+            }
+            else if(count($driver) > 0 && $driver[0]->state === 'deleted'){
+                return $this->returnError('00002', 'phone number is not exist');
+            }
+            else
+            {
+    
+                $message ="مرحبا سائق الجواب الرمز ";
+                $code = $this->send_code($request->phone, $message , $request->phone_id);
+                if($code !== false){
+                    $data = (object)[
+                        'code'=>(string)$code
+                    ];
+                    return $this->returnSuccessMessage($data);
+                }else{
+                    return $this->returnError('00003', "verification code has not sent ");
+                }
+            }
         }
-        else if(count($driver) > 0 && $driver[0]->state === 'deleted'){
-            return $this->returnError('', 'phone number is not exist');
-        }
-        else{
+        else
+        {
 
             $message ="مرحبا سائق الجواب الرمز ";
             $code = $this->send_code($request->phone, $message , $request->phone_id);
             if($code !== false){
-                return $this->returnSuccessMessage($code);
+                $data = (object)[
+                    'code'=>(string)$code
+                ];
+                return $this->returnSuccessMessage($data);
             }else{
-                return $this->returnError('', "verification code has not sent ");
+                return $this->returnError('00003', "verification code has not sent ");
             }
         }
+       
     }
     public function send_message_driver_reset(Request $request)
     {
