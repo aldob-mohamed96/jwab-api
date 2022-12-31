@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Driver;
 
 use App\Http\Controllers\Controller;
+use App\Models\banner;
+use DB;
 use Illuminate\Http\Request;
 
 use App\Traits\GeneralTrait;
@@ -14,7 +16,7 @@ use Hash;
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 use App\Models\Driver\DriverDocuments;
-
+use App\Models\notes;
 
 class DriverAuthController extends Controller
 {   
@@ -155,11 +157,59 @@ class DriverAuthController extends Controller
             $driverData->save();
             $driverData->api_token  = $request->header('auth-token');
             $verison = Version::all();
-            $driverData -> version = $verison[0]->driver;
-            $driverData -> updating = $verison[0]->driver_state;            
-            $driverData -> iosVersion = $verison[1]->driver;
-            $driverData -> iosUpdating = $verison[1]->driver_state;
-            return $this -> returnData('driver' , $driverData,'driver data');
+
+          
+        
+         
+            
+
+            $notes = notes::select(['id' ,'title_ar','title_en','subtitle_ar','subtitle_en'])->get()->last();
+            $banner = banner::select(['id','title','image'])->get();
+          
+            $verison = Version::all();
+            $user = (object)[
+                'id'=>(string)$driverData->id,
+                'name'=>$driverData->name,
+                'phone'=>$driverData->phone,
+                'account'=>(double)$driverData->account,
+                'api_token'=>$driverData->api_token,
+                'current_vechile'=>(string)$driverData->current_vechile,
+                'current_loc_latitude'=>$driverData->current_loc_latitude,
+                'current_loc_longtitude'=>$driverData->current_loc_longtitude,
+                'current_loc_name'=>$driverData->current_loc_name,
+                'persnol_photo'=>$driverData->persnol_photo,
+                'state'=>$driverData->state,
+                'driverRate'=>(string)$driverData->driver_rate,
+                'driverCounter'=>(string)$driverData->driver_counter,
+                'vechileRate'=>(string)$driverData->vechile_rate,
+                'vechileCounter'=>(string)$driverData->vechile_counter,
+                'timeRate'=>(string)$driverData->time_rate,
+                'timeCounter'=>(string)$driverData->time_counter,
+                'idCopyNo'=>(string)$driverData->id_copy_no,
+                'idExpirationDate'=>$driverData->id_expiration_date,
+                'licenseType'=>$driverData->license_type,
+                'licenseExpirationDate'=>$driverData->license_expiration_date,
+                'birthDate'=>(string)$driverData->birth_date,
+                'startWorkingDate'=>$driverData->start_working_date,
+                'contractEndDate'=>$driverData->contract_end_date,
+                'finalClearanceDate'=>$driverData->final_clearance_date,
+                'email'=>$driverData->email,
+                'ssd'=>$driverData->ssd,
+                'currentVersionAndroid' =>  $verison[0]->driver,
+                'updatedAndroid' =>  $verison[0]->driver_state==0?false:true,
+                'currentVersionIos' =>  $verison[1]->driver,
+                'updatedIos' =>  $verison[1]->driver_state==0?false:true
+            ];
+
+            $data = (object) [
+                'user' => $user,
+                'banners'=>$banner,
+                'notes'=>$notes
+
+
+            ];
+
+            return $this -> returnData($data,'driver data');
         }
         else{
             return $this->returnError('E001', "driver not exist ");

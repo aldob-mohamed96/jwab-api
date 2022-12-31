@@ -341,7 +341,9 @@ class CirtyTripController extends Controller
         ]);
 
         $data = DB::select("select 
-        trips.id, 
+      
+     
+        CONVERT(trips.id, CHAR) as id,
         trips.state, 
         trips.trip_type, 
         trips.start_loc_name, 
@@ -351,12 +353,13 @@ class CirtyTripController extends Controller
         trips.reqest_time, 
         trips.trip_time ,
         trips.payment_type, 
-        trips.cost, city.city
+        CONVERT(trips.cost, CHAR(20)) as cost, 
+        city.city
         from trips , vechile, city 
         where  trips.vechile_id= city.id and vechile.category_id = city.category_id 
         and trips.trip_type ='city' and trips.state='request' and vechile.id = ?", [$request->current_vechile]);
 
-        return $this -> returnData('data' , $data, 'city trips');   
+        return $this -> returnData($data, 'city trips');   
         
     }
 }

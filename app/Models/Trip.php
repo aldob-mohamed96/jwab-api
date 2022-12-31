@@ -16,6 +16,15 @@ class Trip extends Model
         'reqest_time',
         'trip_start_time'
     ];
+    protected $casts = [
+         'id' => 'string',
+         'cost' => 'string',
+         "start_loc_latitude"=>'double',
+         'start_loc_longtitude'=>'double',
+         'end_loc_latitude'=>'double',
+         'end_loc_longtitude'=>'double',
+
+        ];
     protected $fillable = [
         "rider_id",
         "driver_id",

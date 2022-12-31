@@ -37,7 +37,7 @@ Route::group([
             Route::post('modify/password', [DriverAuthController::class, 'password_update']);
             Route::post('id/expiration/date', [DriverAuthController::class, 'id_expiration_date_update']);
             
-            Route::post('data', [DriverAuthController::class, 'driver_data']);
+            Route::post('home/data', [DriverAuthController::class, 'driver_data']);
             
             Route::post('show/trips/available', [TripController::class, 'show_intrnal_trip_to_driver']);
             Route::post('send/notification', [TripController::class, 'driver_send_notification']);

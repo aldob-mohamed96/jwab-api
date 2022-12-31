@@ -21,8 +21,10 @@ class Driver extends Authenticatable implements JWTSubject {
         'vechile_rate'  => "decimal:1",
         'time_rate'  => "decimal:1",
         'account'  => "decimal:2",
+        'id'  => "string",
         ];
     protected $dates = [
+         
         'id_expiration_date',
         'license_expiration_date',
         'birth_date',
@@ -38,9 +40,8 @@ class Driver extends Authenticatable implements JWTSubject {
         // 'remember_token',
     ];
     protected $fillable = [
-        'id',
         'name',
-        // 'password',
+        'password',
         'available',
         'nationality',
         'ssd',
@@ -48,6 +49,9 @@ class Driver extends Authenticatable implements JWTSubject {
         'id_copy_no',
         'id_expiration_date',
         'license_type',
+        'id_type',
+        'place_issue',
+        'license_number',
         'license_expiration_date',
         'birth_date',
         'start_working_date',
@@ -59,6 +63,7 @@ class Driver extends Authenticatable implements JWTSubject {
         'admin_id',
         'group_id',
         'state',
+        'back',
         'email',
         'email_verified_at',
         'phone',
@@ -71,15 +76,28 @@ class Driver extends Authenticatable implements JWTSubject {
         'current_loc_name',
         'current_loc_zipcode',
         'current_loc_id',
+        'weekly_amount',
+        'weekly_remains',
         'account',
+        'on_company',
+        'monthly_salary',
+        'monthly_deduct',
+        'insurances',
+        'vacation_days',
+        'vacation_days_remains',
+        'group_balance',
         'driver_rate',
         'driver_counter',
         'vechile_rate',
         'vechile_counter',
         'time_rate',
         'time_counter',
-        'group_balance'
     ];
+    public function getPersnolPhotoAttribute($value =null)
+    {
+        if($value !==null)
+        return "http://192.168.0.122/jwab/public/assets/images/drivers/personal_phonto/".$value;
+    }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
