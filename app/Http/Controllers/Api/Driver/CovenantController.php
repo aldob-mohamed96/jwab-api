@@ -13,16 +13,17 @@ class CovenantController extends Controller
     public function show_item(Request $request)
     {
         $request->validate([
-            'id'=>'required'
+            'driver_id'=>'required'
         ]);
-        $items =   CovenantItem::select([
+        $data =   CovenantItem::select([
+            'id',
             'covenant_name',
             'serial_number',
             'current_driver',
             'state',
             'delivery_date'
-        ])->where('current_driver', $request->id)->get();
-        return $this -> returnData('data' , $items,'data');
+        ])->where('current_driver', $request->driver_id)->get();
+        return $this -> returnData($data ,'data convanet');
 
         
     }

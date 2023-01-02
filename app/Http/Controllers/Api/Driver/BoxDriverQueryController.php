@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api\Driver;
 
 use App\Http\Controllers\Controller;
+use App\Models\Driver\BoxDriver;
+use App\Models\Trip;
+use App\Models\Vechile\BoxVechile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Traits\GeneralTrait;
@@ -13,8 +16,8 @@ class BoxDriverQueryController extends Controller
 
     public function get_bonds(Request $request)
     {
-        $first = DB::table('box_vechile')
-            ->select(
+        $first = BoxVechile::
+            select(
                 'box_vechile.id',
                 'box_vechile.payment_type',
                 'box_vechile.money',
@@ -27,8 +30,8 @@ class BoxDriverQueryController extends Controller
             ->where('box_vechile.foreign_type','driver')
             ->where('box_vechile.foreign_id',$request->driver_id);
 
-        $data = DB::table('box_driver')
-        ->select(
+        $data = BoxDriver::
+        select(
             'box_driver.id',
             'box_driver.payment_type',
             'box_driver.money',
@@ -44,10 +47,10 @@ class BoxDriverQueryController extends Controller
             ->paginate(10);
 
             if(count($data)>0){
-                return  $this -> returnData('bonds' , $data, 'list of bonds') ;
+                return  $this -> returnData($data, 'list of bonds') ;
             }
             else{
-                return $this->returnError('E001', "Driver do not have bonds");
+                return $this->returnError('100019', "Driver do not have bonds");
             }
     }
 
@@ -56,22 +59,24 @@ class BoxDriverQueryController extends Controller
         $request->validate([
             'driver_id' =>'required',
             ]);
-        $trip = DB::table('trips')->select([
+        $trip = Trip::select([
+               
                 "trips.id",
                 "trips.state",
                 "trips.trip_type",
                 "trips.start_loc_latitude",
-                "trips.start_loc_longtitude",
+                "trips.start_loc_longtitude",    
                 "trips.start_loc_name",
                 "trips.end_loc_name",
                 "trips.reqest_time",
                 "trips.trip_time",
                 "trips.payment_type",
-                "trips.cost",
-                "driver.name",
+                "trips.cost", 
+                "driver.name as driver",
                 "vechile.plate_number",
-                "rider.name",
-                "rider.phone"
+                "rider.name as rider",
+                "rider.phone as rider_phone",
+             
             ])
         ->leftJoin('driver', 'trips.driver_id', '=', 'driver.id')
         ->leftJoin('vechile', 'vechile.id', '=',  'driver.current_vechile')
@@ -81,9 +86,9 @@ class BoxDriverQueryController extends Controller
         ->orderBy('reqest_time', 'desc')
         ->paginate(10);
         if($trip){
-            return $this->returnSuccessMessage($trip);
+            return $this->returnData($trip,'trips internal dob');
         }else{
-            return $this->returnError('E003', 'there is no trips');
+            return $this->returnError('100020', 'there is no trips');
         }
         
     }

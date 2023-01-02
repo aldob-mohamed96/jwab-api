@@ -98,10 +98,10 @@ class MessagesController extends Controller
 
             $driver = Driver::Where('phone', $request->phone)->get();
             if(count($driver) === 0){
-                return $this->returnError('00001', 'phone number is not exist');
+                return $this->returnError('100001', 'phone number is not exist');
             }
             else if(count($driver) > 0 && $driver[0]->state === 'deleted'){
-                return $this->returnError('00002', 'phone number is not exist');
+                return $this->returnError('100002', 'phone number is not exist');
             }
             else
             {
@@ -114,7 +114,7 @@ class MessagesController extends Controller
                     ];
                     return $this->returnSuccessMessage($data);
                 }else{
-                    return $this->returnError('00003', "verification code has not sent ");
+                    return $this->returnError('100003', "verification code has not sent ");
                 }
             }
         }
@@ -129,7 +129,7 @@ class MessagesController extends Controller
                 ];
                 return $this->returnSuccessMessage($data);
             }else{
-                return $this->returnError('00003', "verification code has not sent ");
+                return $this->returnError('100003', "verification code has not sent ");
             }
         }
        
@@ -185,7 +185,7 @@ class MessagesController extends Controller
             if($code !== false){
                 return $this->returnSuccessMessage($code);
             }else{
-                return $this->returnError('', "verification code has not sent ");
+                return $this->returnError('100003', "verification code has not sent ");
             }
         
     }

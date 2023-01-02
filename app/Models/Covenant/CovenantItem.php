@@ -12,6 +12,9 @@ class CovenantItem extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'id' => 'string',
+       ];
     protected $fillable =  [
         'covenant_name',
         'add_by',

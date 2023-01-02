@@ -43,7 +43,7 @@ class DriverAuthController extends Controller
 
             if(!$token)
             {
-                return $this->returnError('00004', 'some thing went wrongs');
+                return $this->returnError('100004', 'some thing went wrongs');
             }
             else{
                 $driverData = Auth::guard('driver-api') -> user();
@@ -144,7 +144,7 @@ class DriverAuthController extends Controller
                 ];
                 return $this -> returnData($data,'un registered');
             }else{
-                return $this->returnError('00003', "verification code has not sent ");
+                return $this->returnError('100003', "verification code has not sent ");
             }
         }
     }
@@ -212,7 +212,7 @@ class DriverAuthController extends Controller
             return $this -> returnData($data,'driver data');
         }
         else{
-            return $this->returnError('E001', "driver not exist ");
+            return $this->returnError('100008', "driver not exist ");
 
         }
     }
@@ -234,7 +234,7 @@ class DriverAuthController extends Controller
             // }   
             return $this->returnSuccessMessage("Logout Successfully");
         }else{
-            return $this->returnError('', 'some thing is wrongs');
+            return $this->returnError('100017', 'some thing is wrongs');
         }
     }
 
@@ -252,17 +252,47 @@ class DriverAuthController extends Controller
                     $driverData->save();
                     $driverData->api_token = $token;
                     $verison = Version::all();
-                    $driverData -> version = $verison[0]->driver;
-                    $driverData -> updating = $verison[0]->driver_state;
-                    $driverData -> iosVersion = $verison[1]->driver;
-                    $driverData -> iosUpdating = $verison[1]->driver_state;    
-                    return $this -> returnData('driver' , $driverData,'Email updated successfuly');
+                    $data = (object)[
+                        'id'=>(string)$driverData->id,
+                        'name'=>$driverData->name,
+                        'phone'=>$driverData->phone,
+                        'account'=>(double)$driverData->account,
+                        'api_token'=>$driverData->api_token,
+                        'current_vechile'=>(string)$driverData->current_vechile,
+                        'current_loc_latitude'=>$driverData->current_loc_latitude,
+                        'current_loc_longtitude'=>$driverData->current_loc_longtitude,
+                        'current_loc_name'=>$driverData->current_loc_name,
+                        'persnol_photo'=>$driverData->persnol_photo,
+                        'state'=>$driverData->state,
+                        'driverRate'=>(string)$driverData->driver_rate,
+                        'driverCounter'=>(string)$driverData->driver_counter,
+                        'vechileRate'=>(string)$driverData->vechile_rate,
+                        'vechileCounter'=>(string)$driverData->vechile_counter,
+                        'timeRate'=>(string)$driverData->time_rate,
+                        'timeCounter'=>(string)$driverData->time_counter,
+                        'idCopyNo'=>(string)$driverData->id_copy_no,
+                        'idExpirationDate'=>$driverData->id_expiration_date,
+                        'licenseType'=>$driverData->license_type,
+                        'licenseExpirationDate'=>$driverData->license_expiration_date,
+                        'birthDate'=>(string)$driverData->birth_date,
+                        'startWorkingDate'=>$driverData->start_working_date,
+                        'contractEndDate'=>$driverData->contract_end_date,
+                        'finalClearanceDate'=>$driverData->final_clearance_date,
+                        'email'=>$driverData->email,
+                        'ssd'=>$driverData->ssd,
+                        'currentVersionAndroid' =>  $verison[0]->driver,
+                        'updatedAndroid' =>  $verison[0]->driver_state==0?false:true,
+                        'currentVersionIos' =>  $verison[1]->driver,
+                        'updatedIos' =>  $verison[1]->driver_state==0?false:true
+                    ]; 
+
+                    return $this -> returnData($data,'Email updated successfuly');
                 }
             }catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e){
-                return $this->returnError('', "Email is't not update");
+                return $this->returnError('100013', "Email is't not update");
             }
         }
-        return $this->returnError('', "Email is't not update");
+        return $this->returnError('100008', "Email is't not update");
     }
     public function name_update(Request $request)
     {
@@ -301,24 +331,54 @@ class DriverAuthController extends Controller
                 $driverData = Auth::guard('driver-api') -> user();
                 $driver = Driver::where('phone', $request->phone)->get();
                 if(count($driver)){
-                    return $this->returnError('', "Phone number already exist");
+                    return $this->returnError('100015', "Phone number already exist");
                 }
                 if($driverData !== null){
                     $driverData->phone = $request->phone;
                     $driverData->save();
                     $driverData->api_token = $token;
                     $verison = Version::all();
-                    $driverData -> version = $verison[0]->driver;
-                    $driverData -> updating = $verison[0]->driver_state;                    
-                    $driverData -> iosVersion = $verison[1]->driver;
-                    $driverData -> iosUpdating = $verison[1]->driver_state;
-                    return $this -> returnData('driver' , $driverData,'Phone updated successfuly');
+                    $data = (object)[
+                        'id'=>(string)$driverData->id,
+                        'name'=>$driverData->name,
+                        'phone'=>$driverData->phone,
+                        'account'=>(double)$driverData->account,
+                        'api_token'=>$driverData->api_token,
+                        'current_vechile'=>(string)$driverData->current_vechile,
+                        'current_loc_latitude'=>$driverData->current_loc_latitude,
+                        'current_loc_longtitude'=>$driverData->current_loc_longtitude,
+                        'current_loc_name'=>$driverData->current_loc_name,
+                        'persnol_photo'=>$driverData->persnol_photo,
+                        'state'=>$driverData->state,
+                        'driverRate'=>(string)$driverData->driver_rate,
+                        'driverCounter'=>(string)$driverData->driver_counter,
+                        'vechileRate'=>(string)$driverData->vechile_rate,
+                        'vechileCounter'=>(string)$driverData->vechile_counter,
+                        'timeRate'=>(string)$driverData->time_rate,
+                        'timeCounter'=>(string)$driverData->time_counter,
+                        'idCopyNo'=>(string)$driverData->id_copy_no,
+                        'idExpirationDate'=>$driverData->id_expiration_date,
+                        'licenseType'=>$driverData->license_type,
+                        'licenseExpirationDate'=>$driverData->license_expiration_date,
+                        'birthDate'=>(string)$driverData->birth_date,
+                        'startWorkingDate'=>$driverData->start_working_date,
+                        'contractEndDate'=>$driverData->contract_end_date,
+                        'finalClearanceDate'=>$driverData->final_clearance_date,
+                        'email'=>$driverData->email,
+                        'ssd'=>$driverData->ssd,
+                        'currentVersionAndroid' =>  $verison[0]->driver,
+                        'updatedAndroid' =>  $verison[0]->driver_state==0?false:true,
+                        'currentVersionIos' =>  $verison[1]->driver,
+                        'updatedIos' =>  $verison[1]->driver_state==0?false:true
+                    ]; 
+
+                    return $this -> returnData($data,'phone updated successfuly');
                 }
             }catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e){
-                return $this->returnError('', "Phone is't not update");
+                return $this->returnError('100014', "Phone is't not update");
             }
         }
-        return $this->returnError('', "Phone is't not update");     
+        return $this->returnError('100014', "Phone is't not update");     
     }
     public function password_update(Request $request)
     {
@@ -344,16 +404,16 @@ class DriverAuthController extends Controller
                         return $this -> returnData('driver' , $driverData,'Password updated successfuly');
                     }
                     else{
-                        return $this->returnError('', "Password is't not update");
+                        return $this->returnError('100008', "Password is't not update");
                     }
                 }else{
-                    return $this->returnError('', "Password is't not update");
+                    return $this->returnError('100018', "Password is't not update");
                 }
             }catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e){
-                return $this->returnError('', "Password is't not update");
+                return $this->returnError('100018', "Password is't not update");
             }
         }
-        return $this->returnError('', "Password is't not update");     
+        return $this->returnError('100018', "Password is't not update");     
     }
 
     public function id_expiration_date_update(Request $request)
@@ -388,30 +448,54 @@ class DriverAuthController extends Controller
 
         $request->validate([
             'phone'    => ['required', 'string'],
-            'new_password' => ['required', 'string'],
-            'device_token' => ['required', 'string'],
+            'password' => ['required', 'string'],
+           
         ]);
         $drivers = Driver::where('phone', $request->phone)->get();
         if(count($drivers) > 0 ){
-            $driver = $drivers[0];
-            $driver -> password =  Hash::make($request->new_password);
-            $driver->remember_token = $request->device_token;
-            $driver->available = 0;
-            $driver->save();
-            $token = Auth::guard('driver-api')->attempt(['phone' => $driver->phone, 'password' =>  $request->new_password]);
-            if(!$token){
-                return $this->returnError('E001', 'some thing went wrongs');
-            }else{
-                $driver->api_token = $token;
+            $driverData = $drivers[0];
+            $driverData -> password =  Hash::make($request->password);
+            $driverData->save();
                 $verison = Version::all();
-                $driver-> version = $verison[0]->driver;
-                $driver-> updating = $verison[0]->driver_state;
-                $driver-> iosVersion = $verison[1]->driver;
-                $driver-> iosUpdating = $verison[1]->driver_state;
-                return $this -> returnData('driver' , $driver,'reset password successfuly');    
-            }  
-        }else{
-            return $this->returnError('E002', 'error in driver data');
+                $data = (object)[
+                    'id'=>(string)$driverData->id,
+                    'name'=>$driverData->name,
+                    'phone'=>$driverData->phone,
+                    'account'=>(double)$driverData->account,
+                    'api_token'=>$driverData->api_token,
+                    'current_vechile'=>(string)$driverData->current_vechile,
+                    'current_loc_latitude'=>$driverData->current_loc_latitude,
+                    'current_loc_longtitude'=>$driverData->current_loc_longtitude,
+                    'current_loc_name'=>$driverData->current_loc_name,
+                    'persnol_photo'=>$driverData->persnol_photo,
+                    'state'=>$driverData->state,
+                    'driverRate'=>(string)$driverData->driver_rate,
+                    'driverCounter'=>(string)$driverData->driver_counter,
+                    'vechileRate'=>(string)$driverData->vechile_rate,
+                    'vechileCounter'=>(string)$driverData->vechile_counter,
+                    'timeRate'=>(string)$driverData->time_rate,
+                    'timeCounter'=>(string)$driverData->time_counter,
+                    'idCopyNo'=>(string)$driverData->id_copy_no,
+                    'idExpirationDate'=>$driverData->id_expiration_date,
+                    'licenseType'=>$driverData->license_type,
+                    'licenseExpirationDate'=>$driverData->license_expiration_date,
+                    'birthDate'=>(string)$driverData->birth_date,
+                    'startWorkingDate'=>$driverData->start_working_date,
+                    'contractEndDate'=>$driverData->contract_end_date,
+                    'finalClearanceDate'=>$driverData->final_clearance_date,
+                    'email'=>$driverData->email,
+                    'ssd'=>$driverData->ssd,
+                    'currentVersionAndroid' =>  $verison[0]->driver,
+                    'updatedAndroid' =>  $verison[0]->driver_state==0?false:true,
+                    'currentVersionIos' =>  $verison[1]->driver,
+                    'updatedIos' =>  $verison[1]->driver_state==0?false:true
+                ];
+               
+                return $this -> returnData($data,'rest password successfuly');   
+             
+        
+            }else{
+            return $this->returnError('100008', 'error in driver data');
         }
     }
     
@@ -433,7 +517,7 @@ class DriverAuthController extends Controller
 
         $driverData = Driver::where('phone', $request->phone)->get();
         if(count($driverData) > 0 ){
-            return $this->returnError('00006', 'هذه البيانات موجودة بالفعل');
+            return $this->returnError('100006', 'هذه البيانات موجودة بالفعل');
         }
         else
         {
@@ -508,7 +592,7 @@ class DriverAuthController extends Controller
        
         return $this -> returnData($data,'register successfuly');
     }
-    return $this->returnError('00007', 'حدث خطاء ما');
+    return $this->returnError('100007', 'حدث خطاء ما');
 
     }
 

@@ -192,15 +192,15 @@ class CirtyTripController extends Controller
                     $vechile->save();
 
                     $this->push_notification($driver->remember_token, 'تم إضافة إلى الرصيد', 'تم أضافة مبلغ  ' .($driver_cost). ' إلى رصيدك  ', 'payment');
-                    return $this->returnSuccessMessage("Payment confirmed successfully");
+                    return $this->returnData("Payment confirmed successfully","Payment confirmed successfully");
                 }
             }
             else{
-                return $this->returnError('E001',"هذا الرحلة لم تعد متاحة ");
+                return $this->returnError('100016',"هذا الرحلة لم تعد متاحة ");
             }
         }
         else{
-            return $this->returnError('E001',"حدث خطاء هذه الرحلة لم تعد متاحة ");
+            return $this->returnError('100016',"حدث خطاء هذه الرحلة لم تعد متاحة ");
         }
     }
 

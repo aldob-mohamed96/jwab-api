@@ -11,6 +11,13 @@ class BoxVechile extends Model
 
     protected $table = 'box_vechile';
     use HasFactory;
+    protected $casts = [
+
+        'total_money'  => "string",
+        'tax'  => "string",
+        'money'  => "string",
+        'id'  => "string",
+        ];
     protected $fillable =  [
         'vechile_id',
         'foreign_type',

@@ -21,7 +21,6 @@ class MaintenanceController extends Controller
             'counter_number' => 'required',
             'counter_photo' => 'required|mimes:jpeg,png,jpg,gif,svg',
             'bill_photo' => 'required|mimes:jpeg,png,jpg,gif,svg',
-            // 'maintenance_note' => 'required|string',
             'vechile_id' => 'required',
             'driver_id' => 'required',
         ]);
@@ -29,7 +28,7 @@ class MaintenanceController extends Controller
         ->orderBy('added_date', 'desc')->get();
         $driver = Driver::find($request->driver_id);
         if($driver == null){
-            return $this->returnError('E001',"حدث خطاء الرجاء المحاولة فى وقت لاحق");
+            return $this->returnError('100008',"حدث خطاء الرجاء المحاولة فى وقت لاحق");
         }
         if(count($data) === 0){
             $maintenance = new Maintenance();
@@ -42,7 +41,17 @@ class MaintenanceController extends Controller
             $maintenance->vechile_id = $request->vechile_id;
             $maintenance->driver_id = $request->driver_id;
             $maintenance->save();
-            return $this->returnSuccessMessage("تم حفظ بيانات الصيانة بنجاح");
+            $data = (object)[
+                'id'=> (string)$maintenance->id,
+                'maintenance_type'=> $maintenance->maintenance_type,
+                'counter_number'=> (string)$maintenance->counter_number,
+                'counter_photo'=> $maintenance->counter_photo,
+                'bill_photo'=> $maintenance->bill_photo,
+                'added_date'=> $maintenance->added_date,
+                'confirm_date'=>$maintenance->confirm_date,
+            ];
+
+            return $this->returnData($data,"تم حفظ بيانات الصيانة بنجاح");
         }
         else if( count($data) === 1){
             $maintenance = new Maintenance();
@@ -66,7 +75,17 @@ class MaintenanceController extends Controller
                 $note->save();
                 $this->push_notification($driver->remember_token, 'تحذير تم تجاوز الحد المسموح لك لتغير الزيت', $note->content, 'warning');
             }
-        return $this->returnSuccessMessage("تم حفظ بيانات الصيانة بنجاح");
+            $data = (object)[
+                'id'=> (string)$maintenance->id,
+                'maintenance_type'=> $maintenance->maintenance_type,
+                'counter_number'=> (string)$maintenance->counter_number,
+                'counter_photo'=> $maintenance->counter_photo,
+                'bill_photo'=> $maintenance->bill_photo,
+                'added_date'=> $maintenance->added_date,
+                'confirm_date'=>$maintenance->confirm_date,
+            ];
+
+            return $this->returnData($data,"تم حفظ بيانات الصيانة بنجاح");
         }
         else if( count($data) > 1){
             $maintenance = new Maintenance();
@@ -93,10 +112,20 @@ class MaintenanceController extends Controller
                 $note->save();
                 $this->push_notification($driver->remember_token, 'تحذير تم تجاوز الحد المسموح لك لتغير الزيت', $note->content, 'warning');
             }
-        return $this->returnSuccessMessage("تم حفظ بيانات الصيانة بنجاح");
+            $data = (object)[
+                'id'=> (string)$maintenance->id,
+                'maintenance_type'=> $maintenance->maintenance_type,
+                'counter_number'=> (string)$maintenance->counter_number,
+                'counter_photo'=> $maintenance->counter_photo,
+                'bill_photo'=> $maintenance->bill_photo,
+                'added_date'=> $maintenance->added_date,
+                'confirm_date'=>$maintenance->confirm_date,
+            ];
+
+            return $this->returnData($data,"تم حفظ بيانات الصيانة بنجاح");
         }
         else{
-            return $this->returnError('E001'," .حدث خطاء الرجاء المحاولة فى وقت لاحق");
+            return $this->returnError('10'," .حدث خطاء الرجاء المحاولة فى وقت لاحق");
         }
     }
 
@@ -123,10 +152,10 @@ class MaintenanceController extends Controller
             $data = Maintenance::select([ 'id', 'maintenance_type','counter_number' , 'counter_photo', 'bill_photo', 'added_date', 'maintenance_note', 'confirm_date'])
                         ->where('driver_id', $driver->id)->where('vechile_id', $driver->current_vechile)->paginate(10);
 
-            return $this -> returnData('data' , $data, 'maintenance for this vechile');
+            return $this -> returnData($data, 'maintenance for this vechile');
         }
         else{
-            return $this->returnError('E001'," .حدث خطاء الرجاء المحاولة فى وقت لاحق");
+            return $this->returnError('100008'," .حدث خطاء الرجاء المحاولة فى وقت لاحق");
         }
     }
 }

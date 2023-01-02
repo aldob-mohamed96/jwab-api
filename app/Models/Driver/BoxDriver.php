@@ -10,6 +10,13 @@ class BoxDriver extends Model
     protected $table = 'box_driver';
     public $timestamps = false; 
 
+    protected $casts = [
+
+        'total_money'  => "string",
+        'tax'  => "string",
+        'money'  => "string",
+        'id'  => "string",
+        ];
     use HasFactory;
     protected $fillable =  [
         'driver_id',

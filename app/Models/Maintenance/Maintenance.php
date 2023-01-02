@@ -12,7 +12,21 @@ class Maintenance extends Model
 
     public $timestamps = false; 
 
-    protected $fillable =[
+    protected $casts = [
+        'id' => 'string',
+        'counter_number' => 'string',
+       ];
+       public function getCounterPhotoAttribute($value =null)
+       {
+           if($value !==null)
+           return "http://192.168.0.122/jwab/public/assets/".$value;
+       }
+       public function getBillPhotoAttribute($value =null)
+       {
+           if($value !==null)
+           return "http://192.168.0.122/jwab/public/assets/".$value;
+       }
+       protected $fillable =[
         'id',
         'maintenance_type',
         'counter_number',
